@@ -9,6 +9,9 @@ class Data:
         self.key = key
         self.value = value
 
+# The created custom_hash method is inefficient (high probability of hash_value duplication).
+# This was done intentionally, to explore the logic of a hash table and linked list data structures. 
+# When using the code in the production the method must be redesigned and improved according to requrements.
 
 class HashTable:
     def __init__(self, table_size):
@@ -69,3 +72,14 @@ class HashTable:
             else:
                 print(f"    [{i}] {val}")
         print("}")
+
+
+
+# Test
+
+# ht = HashTable(5)
+# ht.add_key_value("Hey", "Joe")
+# ht.add_key_value("Hey", "Joe")
+# ht.add_key_value("Hey", "Joe")
+# ht.add_key_value("Hey", "Joe")
+# ht.print_table()
