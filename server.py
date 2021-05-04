@@ -9,6 +9,7 @@ import linked_list
 import hash_table
 import binary_search_tree
 import custom_queue
+import stack
 
 import random
 
@@ -146,6 +147,15 @@ def delete_user(user_id):
 # Create a BlogPost
 @app.route("/blog_post/<user_id>", methods=["POST"])
 def create_blog_post(user_id):
+    """Create new blog post and add it to database. 
+    Return the success message if the operation is done.
+
+    Args:
+        user_id (int): user id
+
+    Returns:
+        JSON: success message
+    """
     data = request.get_json()
 
     user = User.query.filter_by(id=user_id).first()
@@ -262,6 +272,44 @@ def get_numeric_post_bodies():
         )
 
     return jsonify(return_list)
+
+
+# Stack
+# Delete the number of last blog posts from the database
+@app.route("/blog_post/delete_last_n_posts/<int:n_posts>", methods=["DELETE"])
+def delete_last_n_posts(n_posts):
+    """Delete the number of last blog posts from the database.
+
+    Args:
+        n_posts (int): the number of blog posts to delete
+
+    Returns:
+        JSON: result message
+    """
+
+    # Query all the blog posts data
+    blog_posts = BlogPost.query.all()
+
+    # Create the Stack instance
+    s = stack.Stack()
+
+    # Loop through the blog posts and push the blog post 
+    # objects to the to of the stack in ascending order, so
+    # the highest blog_post_id will be on the top of the stack.
+    for post in blog_posts:
+        s.push(post)
+
+    # Pop the provided number of posts from the stack,
+    # and delete them from the database one by one 
+    for _ in range(n_posts):
+        post_to_delete = s.pop()
+        db.session.delete(post_to_delete.data)
+        db.session.commit()
+
+    return jsonify({
+        "message" : f"{n_posts} last blog posts was successfully deleted, " + 
+        f"the current number of blog posts in the database is {s.size}"
+    })
 
 
 if __name__ == "__main__":
