@@ -53,8 +53,7 @@ class BlogPost(db.Model):
 
 
 # Routes
-
-# Create the User
+# Create the user
 @app.route("/user", methods=["POST"])
 def create_user():
     data = request.get_json()
@@ -70,8 +69,7 @@ def create_user():
 
 
 # Linked List
-
-# Get all Users in a descending order
+# Get all users in a descending order
 @app.route("/user/descending_id", methods=["GET"])
 def get_all_users_descending():
     users = User.query.all()
@@ -90,8 +88,8 @@ def get_all_users_descending():
 
     return jsonify(all_users_ll.to_list()), 200
 
-
-# Get all Users in a ascending order
+# Linked List
+# Get all users in a ascending order
 @app.route("/user/ascending_id", methods=["GET"])
 def get_all_users_ascending():
     users = User.query.all()
@@ -110,7 +108,7 @@ def get_all_users_ascending():
 
     return jsonify(all_users_ll.to_list()), 200
 
-
+# Linked List
 # Get one user
 @app.route("/user/<user_id>", methods=["GET"])
 def get_one_user(user_id):
@@ -144,7 +142,7 @@ def delete_user(user_id):
 
 
 # Hash Table
-# Create a BlogPost
+# Create a blog post
 @app.route("/blog_post/<user_id>", methods=["POST"])
 def create_blog_post(user_id):
     """Create new blog post and add it to database. 
@@ -156,19 +154,24 @@ def create_blog_post(user_id):
     Returns:
         JSON: success message
     """
+    
     data = request.get_json()
 
+    # Check if the user is in the database
     user = User.query.filter_by(id=user_id).first()
     if not user:
         return jsonify({"message": "user does not exist!"}), 400
 
+    # Create an instance of a HashTable
     ht = hash_table.HashTable(10)
 
+    # Create a blog post
     ht.add_key_value("title", data["title"])
     ht.add_key_value("body", data["body"])
     ht.add_key_value("date", now)
     ht.add_key_value("user_id", user_id)
 
+    # Add a blog post to the database
     new_blog_post = BlogPost(
         title=ht.get_value("title"),
         body=ht.get_value("body"),
